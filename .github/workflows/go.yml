@@ -18,7 +18,7 @@ jobs:
 
       - uses: actions/setup-go@v2
         with:
-          go-version: 1.16.x
+          go-version: master # TODO: downgrade to v1.18 once available
 
       - run: go build -gcflags="-m" ./...
 
@@ -31,7 +31,7 @@ jobs:
 
       - uses: actions/setup-go@v2
         with:
-          go-version: 1.16.x
+          go-version: master # TODO: downgrade to v1.18 once available
 
       - name: Run staticcheck ./...
         run: |
@@ -45,7 +45,7 @@ jobs:
 
       - uses: actions/setup-go@v2
         with:
-          go-version: 1.16.x
+          go-version: master # TODO: downgrade to v1.18 once available
 
       - run: go vet ./...
 
@@ -56,7 +56,7 @@ jobs:
 
       - uses: actions/setup-go@v2
         with:
-          go-version: 1.16.x
+          go-version: master # TODO: downgrade to v1.18 once available
 
       - name: Run gofmt -d .
         run: |

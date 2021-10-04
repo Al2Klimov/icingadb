@@ -15,7 +15,8 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v2
         with:
-          go-version: '^1.16' # icinga-testing uses go:embed which is available in Go 1.16+
+          # TODO: downgrade to v1.18 once available
+          go-version: master # icinga-testing uses go:embed which is available in Go 1.16+
       - name: Build Icinga DB
         run: go build ./cmd/icingadb
         env:
