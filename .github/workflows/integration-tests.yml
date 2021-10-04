@@ -12,10 +12,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Setup Go
-        uses: actions/setup-go@v2
-        with:
-          go-version: '^1.16' # icinga-testing uses go:embed which is available in Go 1.16+
+      - name: Setup Go # icinga-testing uses go:embed which is available in Go 1.16+
+        run: sudo .github/workflows/setup-go.sh # TODO: downgrade to v1.18 once available
       - name: Build Icinga DB
         run: go build ./cmd/icingadb
         env:
