@@ -181,7 +181,7 @@ func packValue(in reflect.Value, out io.Writer) error {
 		}
 
 		return nil
-	case reflect.Ptr:
+	case reflect.Pointer:
 		if in.IsNil() {
 			err := packValue(reflect.Value{}, out)
 
