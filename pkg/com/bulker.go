@@ -8,16 +8,16 @@ import (
 )
 
 // Bulker reads all values from a channel and streams them in chunks into a Bulk channel.
-type Bulker struct {
-	ch  chan []interface{}
+type Bulker[T interface{}] struct {
+	ch  chan []T
 	ctx context.Context
 	mu  sync.Mutex
 }
 
 // NewBulker returns a new Bulker and starts streaming.
-func NewBulker(ctx context.Context, ch <-chan interface{}, count int) *Bulker {
-	b := &Bulker{
-		ch:  make(chan []interface{}),
+func NewBulker[T interface{}](ctx context.Context, ch <-chan T, count int) *Bulker[T] {
+	b := &Bulker[T]{
+		ch:  make(chan []T),
 		ctx: ctx,
 		mu:  sync.Mutex{},
 	}
@@ -28,14 +28,14 @@ func NewBulker(ctx context.Context, ch <-chan interface{}, count int) *Bulker {
 }
 
 // Bulk returns the channel on which the bulks are delivered.
-func (b *Bulker) Bulk() <-chan []interface{} {
+func (b *Bulker[T]) Bulk() <-chan []T {
 	return b.ch
 }
 
-func (b *Bulker) run(ch <-chan interface{}, count int) {
+func (b *Bulker[T]) run(ch <-chan T, count int) {
 	defer close(b.ch)
 
-	bufCh := make(chan interface{}, count)
+	bufCh := make(chan T, count)
 	g, ctx := errgroup.WithContext(b.ctx)
 
 	g.Go(func() error {
@@ -57,7 +57,7 @@ func (b *Bulker) run(ch <-chan interface{}, count int) {
 
 	g.Go(func() error {
 		for done := false; !done; {
-			buf := make([]interface{}, 0, count)
+			buf := make([]T, 0, count)
 			timeout := time.After(256 * time.Millisecond)
 
 			for drain := true; drain && len(buf) < count; {
@@ -92,6 +92,6 @@ func (b *Bulker) run(ch <-chan interface{}, count int) {
 }
 
 // Bulk reads all values from a channel and streams them in chunks into a returned channel.
-func Bulk(ctx context.Context, ch <-chan interface{}, count int) <-chan []interface{} {
+func Bulk[T interface{}](ctx context.Context, ch <-chan T, count int) <-chan []T {
 	return NewBulker(ctx, ch, count).Bulk()
 }
