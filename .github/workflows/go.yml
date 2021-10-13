@@ -31,7 +31,7 @@ jobs:
 
       - name: Run staticcheck ./...
         run: |
-            go install honnef.co/go/tools/cmd/staticcheck@df71e5d0e0ed317ebf43e6e59cf919430fa4b8f2
+            go install honnef.co/go/tools/cmd/staticcheck@5335c16898c7d8bce572e125b49004125964a123
             ~/go/bin/staticcheck ./...
 
   vet:
