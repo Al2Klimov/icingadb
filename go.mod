@@ -11,7 +11,7 @@ require (
 	github.com/jmoiron/sqlx v1.3.4
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.7.0
-	go.uber.org/zap v1.19.1
+	go.uber.org/zap v1.20.0
 	golang.org/x/exp v0.0.0-20210514180818-737f94c0881e
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
