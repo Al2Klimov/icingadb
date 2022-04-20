@@ -157,7 +157,7 @@ func (s Sync) ApplyDelta(ctx context.Context, delta *Delta) error {
 	if len(delta.Delete) > 0 {
 		s.logger.Infof("Deleting %d items of type %s", len(delta.Delete), utils.Key(utils.Name(delta.Subject.Entity()), ' '))
 		g.Go(func() error {
-			return s.db.Delete(ctx, delta.Subject.Entity(), delta.Delete.IDs())
+			return s.db.Delete(ctx, delta.Subject.Entity(), delta.Delete.IDs(), nil)
 		})
 	}
 
