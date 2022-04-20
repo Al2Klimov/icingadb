@@ -493,7 +493,9 @@ func (db *DB) YieldAll(ctx context.Context, factoryFunc contracts.EntityFactoryF
 // The insert statement is created using BuildInsertStmt with the first entity from the entities stream.
 // Bulk size is controlled via Options.MaxPlaceholdersPerStatement and
 // concurrency is controlled via Options.MaxConnectionsPerTable.
-func (db *DB) CreateStreamed(ctx context.Context, entities <-chan contracts.Entity) error {
+func (db *DB) CreateStreamed(
+	ctx context.Context, entities <-chan contracts.Entity, succeeded chan<- contracts.Entity,
+) error {
 	first, forward, err := com.CopyFirst(ctx, entities)
 	if first == nil {
 		return errors.Wrap(err, "can't copy first entity")
@@ -503,7 +505,7 @@ func (db *DB) CreateStreamed(ctx context.Context, entities <-chan contracts.Enti
 	stmt, placeholders := db.BuildInsertStmt(first)
 
 	return db.NamedBulkExec(
-		ctx, stmt, db.BatchSizeByPlaceholders(placeholders), sem, forward, nil, com.NeverSplit[contracts.Entity],
+		ctx, stmt, db.BatchSizeByPlaceholders(placeholders), sem, forward, succeeded, com.NeverSplit[contracts.Entity],
 	)
 }
 

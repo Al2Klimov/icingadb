@@ -125,7 +125,7 @@ func (s Sync) ApplyDelta(ctx context.Context, delta *Delta) error {
 		}
 
 		g.Go(func() error {
-			return s.db.CreateStreamed(ctx, entities)
+			return s.db.CreateStreamed(ctx, entities, nil)
 		})
 	}
 
