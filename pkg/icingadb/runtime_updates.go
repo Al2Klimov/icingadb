@@ -9,6 +9,7 @@ import (
 	"github.com/icinga/icingadb/pkg/contracts"
 	v1 "github.com/icinga/icingadb/pkg/icingadb/v1"
 	"github.com/icinga/icingadb/pkg/icingaredis"
+	"github.com/icinga/icingadb/pkg/icingaredis/telemetry"
 	"github.com/icinga/icingadb/pkg/logging"
 	"github.com/icinga/icingadb/pkg/periodic"
 	"github.com/icinga/icingadb/pkg/structify"
@@ -25,14 +26,18 @@ type RuntimeUpdates struct {
 	db     *DB
 	redis  *icingaredis.Client
 	logger *logging.Logger
+	stats  *telemetry.Stats
 }
 
 // NewRuntimeUpdates creates a new RuntimeUpdates.
-func NewRuntimeUpdates(db *DB, redis *icingaredis.Client, logger *logging.Logger) *RuntimeUpdates {
+func NewRuntimeUpdates(
+	db *DB, redis *icingaredis.Client, logger *logging.Logger, stats *telemetry.Stats,
+) *RuntimeUpdates {
 	return &RuntimeUpdates{
 		db:     db,
 		redis:  redis,
 		logger: logger,
+		stats:  stats,
 	}
 }
 
@@ -67,6 +72,7 @@ func (r *RuntimeUpdates) Sync(
 
 	for _, factoryFunc := range factoryFuncs {
 		s := common.NewSyncSubject(factoryFunc)
+		stat := getCounterForEntity(r.stats, s.Entity())
 
 		updateMessages := make(chan redis.XMessage, r.redis.Options.XReadCount)
 		upsertEntities := make(chan contracts.Entity, r.redis.Options.XReadCount)
@@ -128,6 +134,7 @@ func (r *RuntimeUpdates) Sync(
 					}
 
 					counter.Inc()
+					stat.Inc()
 
 					if !allowParallel {
 						select {
@@ -167,6 +174,7 @@ func (r *RuntimeUpdates) Sync(
 					}
 
 					counter.Inc()
+					stat.Inc()
 
 					if !allowParallel {
 						select {
@@ -232,6 +240,7 @@ func (r *RuntimeUpdates) Sync(
 					}
 
 					counter.Inc()
+					r.stats.Config.Inc()
 				case <-ctx.Done():
 					return ctx.Err()
 				}
@@ -268,6 +277,7 @@ func (r *RuntimeUpdates) Sync(
 					}
 
 					counter.Inc()
+					r.stats.Config.Inc()
 				case <-ctx.Done():
 					return ctx.Err()
 				}

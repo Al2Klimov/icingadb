@@ -12,6 +12,7 @@ import (
 	"github.com/icinga/icingadb/pkg/icingadb/v1"
 	"github.com/icinga/icingadb/pkg/icingadb/v1/overdue"
 	"github.com/icinga/icingadb/pkg/icingaredis"
+	"github.com/icinga/icingadb/pkg/icingaredis/telemetry"
 	"github.com/icinga/icingadb/pkg/logging"
 	"github.com/icinga/icingadb/pkg/periodic"
 	"github.com/pkg/errors"
@@ -25,14 +26,16 @@ type Sync struct {
 	db     *icingadb.DB
 	redis  *icingaredis.Client
 	logger *logging.Logger
+	stats  *telemetry.Stats
 }
 
 // NewSync creates a new Sync.
-func NewSync(db *icingadb.DB, redis *icingaredis.Client, logger *logging.Logger) *Sync {
+func NewSync(db *icingadb.DB, redis *icingaredis.Client, logger *logging.Logger, stats *telemetry.Stats) *Sync {
 	return &Sync{
 		db:     db,
 		redis:  redis,
 		logger: logger,
+		stats:  stats,
 	}
 }
 
@@ -230,6 +233,7 @@ func (s Sync) updateOverdue(
 	}
 
 	counter.Add(uint64(len(ids)))
+	s.stats.Overdue.Add(uint64(len(ids)))
 
 	var op func(ctx context.Context, key string, members ...interface{}) *redis.IntCmd
 	if overdue {

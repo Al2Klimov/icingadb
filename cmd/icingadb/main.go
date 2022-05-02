@@ -11,6 +11,7 @@ import (
 	"github.com/icinga/icingadb/pkg/icingadb/overdue"
 	v1 "github.com/icinga/icingadb/pkg/icingadb/v1"
 	"github.com/icinga/icingadb/pkg/icingaredis"
+	"github.com/icinga/icingadb/pkg/icingaredis/telemetry"
 	"github.com/icinga/icingadb/pkg/logging"
 	"github.com/icinga/icingadb/pkg/utils"
 	"github.com/okzk/sdnotify"
@@ -104,6 +105,7 @@ func run() int {
 	// the heartbeat is not read while HA gets stuck when updating the instance table.
 	var heartbeat *icingaredis.Heartbeat
 	var ha *icingadb.HA
+	var stats *telemetry.Stats
 	{
 		rc, err := cmd.Redis(logs.GetChildLogger("redis"))
 		if err != nil {
@@ -117,6 +119,8 @@ func run() int {
 		}
 		defer db.Close()
 		ha = icingadb.NewHA(ctx, db, heartbeat, logs.GetChildLogger("high-availability"))
+
+		stats = telemetry.NewStats(ctx, rc, logs.GetChildLogger("telemetry"))
 	}
 	// Closing ha on exit ensures that this instance retracts its heartbeat
 	// from the database so that another instance can take over immediately.
@@ -127,10 +131,10 @@ func run() int {
 		ha.Close(ctx)
 		cancelCtx()
 	}()
-	s := icingadb.NewSync(db, rc, logs.GetChildLogger("config-sync"))
-	hs := history.NewSync(db, rc, logs.GetChildLogger("history-sync"))
-	rt := icingadb.NewRuntimeUpdates(db, rc, logs.GetChildLogger("runtime-updates"))
-	ods := overdue.NewSync(db, rc, logs.GetChildLogger("overdue-sync"))
+	s := icingadb.NewSync(db, rc, logs.GetChildLogger("config-sync"), stats)
+	hs := history.NewSync(db, rc, logs.GetChildLogger("history-sync"), stats)
+	rt := icingadb.NewRuntimeUpdates(db, rc, logs.GetChildLogger("runtime-updates"), stats)
+	ods := overdue.NewSync(db, rc, logs.GetChildLogger("overdue-sync"), stats)
 	ret := history.NewRetention(
 		db,
 		cmd.Config.HistoryRetention.Days,
@@ -138,6 +142,7 @@ func run() int {
 		cmd.Config.HistoryRetention.Count,
 		cmd.Config.HistoryRetention.Options,
 		logs.GetChildLogger("history-retention"),
+		stats,
 	)
 
 	sig := make(chan os.Signal, 1)
