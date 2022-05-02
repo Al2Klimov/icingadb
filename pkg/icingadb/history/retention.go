@@ -119,7 +119,7 @@ func (r *Retention) StartWithCallback(ctx context.Context, c func(table string, 
 
 			r.logger.Debugf("Cleaning up historical data for category %s older than %s", category, olderThan)
 
-			rs, err := r.db.CleanupOlderThan(ctx, stmt, r.count, olderThan)
+			rs, err := r.db.CleanupOlderThan(ctx, stmt, r.count, olderThan, nil)
 			if err != nil {
 				select {
 				case errs <- err:
