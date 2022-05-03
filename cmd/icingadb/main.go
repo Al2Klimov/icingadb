@@ -106,6 +106,8 @@ func run() int {
 	var heartbeat *icingaredis.Heartbeat
 	var ha *icingadb.HA
 	var stats *telemetry.Stats
+	var reportResponsibility func(bool)
+
 	{
 		rc, err := cmd.Redis(logs.GetChildLogger("redis"))
 		if err != nil {
@@ -120,7 +122,17 @@ func run() int {
 		defer db.Close()
 		ha = icingadb.NewHA(ctx, db, heartbeat, logs.GetChildLogger("high-availability"))
 
-		stats = telemetry.NewStats(ctx, rc, logs.GetChildLogger("telemetry"))
+		telemetryLogger := logs.GetChildLogger("telemetry")
+		stats = telemetry.NewStats(ctx, rc, telemetryLogger)
+
+		teleHaRefurbisher := utils.NewRefurbisher()
+
+		reportResponsibility = func(isResponsible bool) {
+			_ = teleHaRefurbisher.Do(ctx, func(ctx context.Context) error {
+				telemetry.ReportResponsibility(ctx, rc, telemetryLogger, isResponsible)
+				return nil
+			})
+		}
 	}
 	// Closing ha on exit ensures that this instance retracts its heartbeat
 	// from the database so that another instance can take over immediately.
@@ -163,6 +175,7 @@ func run() int {
 			select {
 			case <-ha.Takeover():
 				logger.Info("Taking over")
+				go reportResponsibility(true)
 
 				go func() {
 					for hactx.Err() == nil {
@@ -315,6 +328,7 @@ func run() int {
 				}()
 			case <-ha.Handover():
 				logger.Warn("Handing over")
+				go reportResponsibility(false)
 
 				cancelHactx()
 			case <-hactx.Done():
