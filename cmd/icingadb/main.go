@@ -58,23 +58,6 @@ func run() int {
 
 	logger.Info("Starting Icinga DB")
 
-	db, err := cmd.Database(logs.GetChildLogger("database"))
-	if err != nil {
-		logger.Fatalf("%+v", errors.Wrap(err, "can't create database connection pool from config"))
-	}
-	defer db.Close()
-	{
-		logger.Info("Connecting to database")
-		err := db.Ping()
-		if err != nil {
-			logger.Fatalf("%+v", errors.Wrap(err, "can't connect to database"))
-		}
-	}
-
-	if err := checkDbSchema(context.Background(), db); err != nil {
-		logger.Fatalf("%+v", err)
-	}
-
 	rc, err := cmd.Redis(logs.GetChildLogger("redis"))
 	if err != nil {
 		logger.Fatalf("%+v", errors.Wrap(err, "can't create Redis client from config"))
@@ -96,8 +79,34 @@ func run() int {
 		go monitorRedisSchema(logger, rc, pos)
 	}
 
+	prioRc, err := cmd.Redis(logs.GetChildLogger("redis"))
+	if err != nil {
+		logger.Fatalf("%+v", errors.Wrap(err, "can't create Redis client from config"))
+	}
+
 	ctx, cancelCtx := context.WithCancel(context.Background())
 	defer cancelCtx()
+
+	telemetryLogger := logs.GetChildLogger("telemetry")
+
+	dbErr := telemetry.NewErr(ctx, prioRc, "db", telemetryLogger)
+
+	db, err := cmd.Database(logs.GetChildLogger("database"), dbErr)
+	if err != nil {
+		logger.Fatalf("%+v", errors.Wrap(err, "can't create database connection pool from config"))
+	}
+	defer db.Close()
+	{
+		logger.Info("Connecting to database")
+		err := db.Ping()
+		if err != nil {
+			logger.Fatalf("%+v", errors.Wrap(err, "can't connect to database"))
+		}
+	}
+
+	if err := checkDbSchema(context.Background(), db); err != nil {
+		logger.Fatalf("%+v", err)
+	}
 
 	// Use dedicated connections for heartbeat and HA to ensure that heartbeats are always processed and
 	// the instance table is updated. Otherwise, the connections can be too busy due to the synchronization of
@@ -109,27 +118,21 @@ func run() int {
 	var reportResponsibility func(bool)
 
 	{
-		rc, err := cmd.Redis(logs.GetChildLogger("redis"))
-		if err != nil {
-			logger.Fatalf("%+v", errors.Wrap(err, "can't create Redis client from config"))
-		}
-		heartbeat = icingaredis.NewHeartbeat(ctx, rc, logs.GetChildLogger("heartbeat"))
+		heartbeat = icingaredis.NewHeartbeat(ctx, prioRc, logs.GetChildLogger("heartbeat"))
 
-		db, err := cmd.Database(logs.GetChildLogger("database"))
+		db, err := cmd.Database(logs.GetChildLogger("database"), dbErr)
 		if err != nil {
 			logger.Fatalf("%+v", errors.Wrap(err, "can't create database connection pool from config"))
 		}
 		defer db.Close()
 		ha = icingadb.NewHA(ctx, db, heartbeat, logs.GetChildLogger("high-availability"))
 
-		telemetryLogger := logs.GetChildLogger("telemetry")
-		stats = telemetry.NewStats(ctx, rc, telemetryLogger)
-
+		stats = telemetry.NewStats(ctx, prioRc, telemetryLogger)
 		teleHaRefurbisher := utils.NewRefurbisher()
 
 		reportResponsibility = func(isResponsible bool) {
 			_ = teleHaRefurbisher.Do(ctx, func(ctx context.Context) error {
-				telemetry.ReportResponsibility(ctx, rc, telemetryLogger, isResponsible)
+				telemetry.ReportResponsibility(ctx, prioRc, telemetryLogger, isResponsible)
 				return nil
 			})
 		}

@@ -5,6 +5,7 @@ import (
 	"github.com/go-sql-driver/mysql"
 	"github.com/icinga/icingadb/pkg/driver"
 	"github.com/icinga/icingadb/pkg/icingadb"
+	"github.com/icinga/icingadb/pkg/icingaredis/telemetry"
 	"github.com/icinga/icingadb/pkg/logging"
 	"github.com/icinga/icingadb/pkg/utils"
 	"github.com/jmoiron/sqlx"
@@ -34,9 +35,9 @@ type Database struct {
 
 // Open prepares the DSN string and driver configuration,
 // calls sqlx.Open, but returns *icingadb.DB.
-func (d *Database) Open(logger *logging.Logger) (*icingadb.DB, error) {
+func (d *Database) Open(logger *logging.Logger, telErr *telemetry.Err) (*icingadb.DB, error) {
 	registerDriverOnce.Do(func() {
-		driver.Register(logger)
+		driver.Register(logger, telErr)
 	})
 
 	var dsn string

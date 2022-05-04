@@ -6,6 +6,7 @@ import (
 	"database/sql/driver"
 	"github.com/go-sql-driver/mysql"
 	"github.com/icinga/icingadb/pkg/backoff"
+	"github.com/icinga/icingadb/pkg/icingaredis/telemetry"
 	"github.com/icinga/icingadb/pkg/logging"
 	"github.com/icinga/icingadb/pkg/retry"
 	"github.com/jmoiron/sqlx"
@@ -43,12 +44,16 @@ func (c RetryConnector) Connect(ctx context.Context) (driver.Conn, error) {
 				if lastErr == nil || err.Error() != lastErr.Error() {
 					c.driver.Logger.Warnw("Can't connect to database. Retrying", zap.Error(err))
 				}
+
+				go c.driver.telErr.Report(err)
 			},
 			OnSuccess: func(elapsed time.Duration, attempt uint64, _ error) {
 				if attempt > 0 {
 					c.driver.Logger.Infow("Reconnected to database",
 						zap.Duration("after", elapsed), zap.Uint64("attempts", attempt+1))
 				}
+
+				go c.driver.telErr.Report(nil)
 			},
 		},
 	), "can't connect to database")
@@ -64,6 +69,7 @@ func (c RetryConnector) Driver() driver.Driver {
 type Driver struct {
 	ctxDriver
 	Logger *logging.Logger
+	telErr *telemetry.Err
 }
 
 // OpenConnector implements the DriverContext interface.
@@ -80,9 +86,9 @@ func (d Driver) OpenConnector(name string) (driver.Connector, error) {
 }
 
 // Register makes our database Driver available under the name "icingadb-*sql".
-func Register(logger *logging.Logger) {
-	sql.Register(MySQL, &Driver{ctxDriver: &mysql.MySQLDriver{}, Logger: logger})
-	sql.Register(PostgreSQL, &Driver{ctxDriver: PgSQLDriver{}, Logger: logger})
+func Register(logger *logging.Logger, telErr *telemetry.Err) {
+	sql.Register(MySQL, &Driver{ctxDriver: &mysql.MySQLDriver{}, Logger: logger, telErr: telErr})
+	sql.Register(PostgreSQL, &Driver{ctxDriver: PgSQLDriver{}, Logger: logger, telErr: telErr})
 	_ = mysql.SetLogger(mysqlLogger(func(v ...interface{}) { logger.Debug(v...) }))
 	sqlx.BindDriver(PostgreSQL, sqlx.DOLLAR)
 }
