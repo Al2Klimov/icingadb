@@ -2,7 +2,7 @@
 
 ## Requirements <a id="installation-requirements"></a>
 
-* Local Redis instance (Will be installed during this documentation)
+* Local Redis (≥6.2) instance (Will be installed during this documentation)
 * MySQL/MariaDB/PostgreSQL database `icingadb`, user and schema imports (Will be set up during this documentation)
 
 ## Setting up Icinga DB <a id="setting-up-icingadb"></a>

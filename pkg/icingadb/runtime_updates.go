@@ -18,6 +18,8 @@ import (
 	"golang.org/x/sync/errgroup"
 	"golang.org/x/sync/semaphore"
 	"reflect"
+	"strconv"
+	"strings"
 	"sync"
 )
 
@@ -303,20 +305,28 @@ func (r *RuntimeUpdates) Sync(
 		})
 	}
 
-	g.Go(r.xRead(ctx, updateMessagesByKey, streams))
+	g.Go(r.xRead(g, ctx, updateMessagesByKey, streams))
 
 	return g.Wait()
 }
 
 // xRead reads from the runtime update streams and sends the data to the corresponding updateMessages channel.
 // The updateMessages channel is determined by a "redis_key" on each redis message.
-func (r *RuntimeUpdates) xRead(ctx context.Context, updateMessagesByKey map[string]chan<- redis.XMessage, streams icingaredis.Streams) func() error {
+func (r *RuntimeUpdates) xRead(
+	g *errgroup.Group, ctx context.Context,
+	updateMessagesByKey map[string]chan<- redis.XMessage, streams icingaredis.Streams,
+) func() error {
 	return func() error {
 		defer func() {
 			for _, updateMessages := range updateMessagesByKey {
 				close(updateMessages)
 			}
 		}()
+
+		refurbishers := make(map[string]*utils.Refurbisher, len(streams))
+		for stream := range streams {
+			refurbishers[stream] = utils.NewRefurbisher()
+		}
 
 		for {
 			xra := &redis.XReadArgs{
@@ -355,6 +365,30 @@ func (r *RuntimeUpdates) xRead(ctx context.Context, updateMessagesByKey map[stri
 					}
 				}
 				streams[stream.Stream] = id
+
+				stream := stream.Stream
+				g.Go(func() error {
+					return refurbishers[stream].Do(ctx, func(ctx context.Context) error {
+						tsAndSerial := strings.Split(id, "-")
+						if s, err := strconv.ParseUint(tsAndSerial[1], 10, 64); err == nil {
+							tsAndSerial[1] = strconv.FormatUint(s+1, 10)
+						}
+
+						cmd := r.redis.XTrimMinIDApprox(ctx, stream, strings.Join(tsAndSerial, "-"), 0)
+						err := cmd.Err()
+
+						if err != nil {
+							if utils.IsContextCanceled(err) {
+								// Maybe just refurbished
+								err = nil
+							} else {
+								err = icingaredis.WrapCmdErr(cmd)
+							}
+						}
+
+						return err
+					})
+				})
 			}
 		}
 	}
