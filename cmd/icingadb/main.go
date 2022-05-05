@@ -127,6 +127,8 @@ func run() int {
 		defer db.Close()
 		ha = icingadb.NewHA(ctx, db, heartbeat, logs.GetChildLogger("high-availability"))
 
+		telemetry.StartHeartbeat(ctx, prioRc, telemetryLogger)
+
 		stats = telemetry.NewStats(ctx, prioRc, telemetryLogger)
 		teleHaRefurbisher := utils.NewRefurbisher()
 
