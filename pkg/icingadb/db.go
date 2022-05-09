@@ -240,7 +240,7 @@ func (db *DB) BulkExec(ctx context.Context, query string, count int, sem *semaph
 
 	g, ctx := errgroup.WithContext(ctx)
 	// Use context from group.
-	bulk := com.Bulk(ctx, arg, count)
+	bulk := com.Bulk(ctx, arg, count, com.NeverSplit[any])
 
 	g.Go(func() error {
 		g, ctx := errgroup.WithContext(ctx)
@@ -304,14 +304,14 @@ func (db *DB) BulkExec(ctx context.Context, query string, count int, sem *semaph
 // and can be executed concurrently to the extent allowed by the semaphore passed in sem.
 // Entities for which the query ran successfully will be streamed on the succeeded channel.
 func (db *DB) NamedBulkExec(
-	ctx context.Context, query string, count int, sem *semaphore.Weighted,
-	arg <-chan contracts.Entity, succeeded chan<- contracts.Entity, splitPolicyFactory com.BulkChunkSplitPolicyFactory,
+	ctx context.Context, query string, count int, sem *semaphore.Weighted, arg <-chan contracts.Entity,
+	succeeded chan<- contracts.Entity, splitPolicyFactory com.BulkChunkSplitPolicyFactory[contracts.Entity],
 ) error {
 	var counter com.Counter
 	defer db.log(ctx, query, &counter).Stop()
 
 	g, ctx := errgroup.WithContext(ctx)
-	bulk := com.BulkEntities(ctx, arg, count, splitPolicyFactory)
+	bulk := com.Bulk(ctx, arg, count, splitPolicyFactory)
 
 	g.Go(func() error {
 		for {
@@ -379,7 +379,7 @@ func (db *DB) NamedBulkExecTx(
 	defer db.log(ctx, query, &counter).Stop()
 
 	g, ctx := errgroup.WithContext(ctx)
-	bulk := com.BulkEntities(ctx, arg, count, com.NeverSplit)
+	bulk := com.Bulk(ctx, arg, count, com.NeverSplit[contracts.Entity])
 
 	g.Go(func() error {
 		for {
@@ -493,7 +493,9 @@ func (db *DB) YieldAll(ctx context.Context, factoryFunc contracts.EntityFactoryF
 // The insert statement is created using BuildInsertStmt with the first entity from the entities stream.
 // Bulk size is controlled via Options.MaxPlaceholdersPerStatement and
 // concurrency is controlled via Options.MaxConnectionsPerTable.
-func (db *DB) CreateStreamed(ctx context.Context, entities <-chan contracts.Entity) error {
+func (db *DB) CreateStreamed(
+	ctx context.Context, entities <-chan contracts.Entity, succeeded chan<- contracts.Entity,
+) error {
 	first, forward, err := com.CopyFirst(ctx, entities)
 	if first == nil {
 		return errors.Wrap(err, "can't copy first entity")
@@ -502,7 +504,9 @@ func (db *DB) CreateStreamed(ctx context.Context, entities <-chan contracts.Enti
 	sem := db.GetSemaphoreForTable(utils.TableName(first))
 	stmt, placeholders := db.BuildInsertStmt(first)
 
-	return db.NamedBulkExec(ctx, stmt, db.BatchSizeByPlaceholders(placeholders), sem, forward, nil, com.NeverSplit)
+	return db.NamedBulkExec(
+		ctx, stmt, db.BatchSizeByPlaceholders(placeholders), sem, forward, succeeded, com.NeverSplit[contracts.Entity],
+	)
 }
 
 // UpsertStreamed bulk upserts the specified entities via NamedBulkExec.
@@ -519,7 +523,8 @@ func (db *DB) UpsertStreamed(ctx context.Context, entities <-chan contracts.Enti
 	stmt, placeholders := db.BuildUpsertStmt(first)
 
 	return db.NamedBulkExec(
-		ctx, stmt, db.BatchSizeByPlaceholders(placeholders), sem, forward, succeeded, com.SplitOnDupId,
+		ctx, stmt, db.BatchSizeByPlaceholders(placeholders), sem,
+		forward, succeeded, com.SplitOnDupId[contracts.Entity],
 	)
 }
 
@@ -550,14 +555,16 @@ func (db *DB) DeleteStreamed(ctx context.Context, entityType contracts.Entity, i
 
 // Delete creates a channel from the specified ids and
 // bulk deletes them by passing the channel along with the entityType to DeleteStreamed.
-func (db *DB) Delete(ctx context.Context, entityType contracts.Entity, ids []interface{}) error {
+func (db *DB) Delete(
+	ctx context.Context, entityType contracts.Entity, ids []interface{}, succeeded chan<- interface{},
+) error {
 	idsCh := make(chan interface{}, len(ids))
 	for _, id := range ids {
 		idsCh <- id
 	}
 	close(idsCh)
 
-	return db.DeleteStreamed(ctx, entityType, idsCh, nil)
+	return db.DeleteStreamed(ctx, entityType, idsCh, succeeded)
 }
 
 func (db *DB) GetSemaphoreForTable(table string) *semaphore.Weighted {

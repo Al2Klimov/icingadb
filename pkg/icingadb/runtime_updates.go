@@ -9,6 +9,7 @@ import (
 	"github.com/icinga/icingadb/pkg/contracts"
 	v1 "github.com/icinga/icingadb/pkg/icingadb/v1"
 	"github.com/icinga/icingadb/pkg/icingaredis"
+	"github.com/icinga/icingadb/pkg/icingaredis/telemetry"
 	"github.com/icinga/icingadb/pkg/logging"
 	"github.com/icinga/icingadb/pkg/periodic"
 	"github.com/icinga/icingadb/pkg/structify"
@@ -17,6 +18,8 @@ import (
 	"golang.org/x/sync/errgroup"
 	"golang.org/x/sync/semaphore"
 	"reflect"
+	"strconv"
+	"strings"
 	"sync"
 )
 
@@ -25,14 +28,18 @@ type RuntimeUpdates struct {
 	db     *DB
 	redis  *icingaredis.Client
 	logger *logging.Logger
+	stats  *telemetry.Stats
 }
 
 // NewRuntimeUpdates creates a new RuntimeUpdates.
-func NewRuntimeUpdates(db *DB, redis *icingaredis.Client, logger *logging.Logger) *RuntimeUpdates {
+func NewRuntimeUpdates(
+	db *DB, redis *icingaredis.Client, logger *logging.Logger, stats *telemetry.Stats,
+) *RuntimeUpdates {
 	return &RuntimeUpdates{
 		db:     db,
 		redis:  redis,
 		logger: logger,
+		stats:  stats,
 	}
 }
 
@@ -67,6 +74,7 @@ func (r *RuntimeUpdates) Sync(
 
 	for _, factoryFunc := range factoryFuncs {
 		s := common.NewSyncSubject(factoryFunc)
+		stat := getCounterForEntity(r.stats, s.Entity())
 
 		updateMessages := make(chan redis.XMessage, r.redis.Options.XReadCount)
 		upsertEntities := make(chan contracts.Entity, r.redis.Options.XReadCount)
@@ -109,7 +117,7 @@ func (r *RuntimeUpdates) Sync(
 			sem := semaphore.NewWeighted(1)
 
 			return r.db.NamedBulkExec(
-				ctx, upsertStmt, upsertCount, sem, upsertEntities, upserted, com.SplitOnDupId,
+				ctx, upsertStmt, upsertCount, sem, upsertEntities, upserted, com.SplitOnDupId[contracts.Entity],
 			)
 		})
 		g.Go(func() error {
@@ -128,6 +136,7 @@ func (r *RuntimeUpdates) Sync(
 					}
 
 					counter.Inc()
+					stat.Inc()
 
 					if !allowParallel {
 						select {
@@ -167,6 +176,7 @@ func (r *RuntimeUpdates) Sync(
 					}
 
 					counter.Inc()
+					stat.Inc()
 
 					if !allowParallel {
 						select {
@@ -213,7 +223,7 @@ func (r *RuntimeUpdates) Sync(
 			sem := semaphore.NewWeighted(1)
 
 			return r.db.NamedBulkExec(
-				ctx, cvStmt, cvCount, sem, customvars, upsertedCustomvars, com.SplitOnDupId,
+				ctx, cvStmt, cvCount, sem, customvars, upsertedCustomvars, com.SplitOnDupId[contracts.Entity],
 			)
 		})
 		g.Go(func() error {
@@ -232,6 +242,7 @@ func (r *RuntimeUpdates) Sync(
 					}
 
 					counter.Inc()
+					r.stats.Config.Inc()
 				case <-ctx.Done():
 					return ctx.Err()
 				}
@@ -248,7 +259,8 @@ func (r *RuntimeUpdates) Sync(
 			sem := semaphore.NewWeighted(1)
 
 			return r.db.NamedBulkExec(
-				ctx, cvFlatStmt, cvFlatCount, sem, flatCustomvars, upsertedFlatCustomvars, com.SplitOnDupId,
+				ctx, cvFlatStmt, cvFlatCount, sem, flatCustomvars,
+				upsertedFlatCustomvars, com.SplitOnDupId[contracts.Entity],
 			)
 		})
 		g.Go(func() error {
@@ -267,6 +279,7 @@ func (r *RuntimeUpdates) Sync(
 					}
 
 					counter.Inc()
+					r.stats.Config.Inc()
 				case <-ctx.Done():
 					return ctx.Err()
 				}
@@ -292,20 +305,28 @@ func (r *RuntimeUpdates) Sync(
 		})
 	}
 
-	g.Go(r.xRead(ctx, updateMessagesByKey, streams))
+	g.Go(r.xRead(g, ctx, updateMessagesByKey, streams))
 
 	return g.Wait()
 }
 
 // xRead reads from the runtime update streams and sends the data to the corresponding updateMessages channel.
 // The updateMessages channel is determined by a "redis_key" on each redis message.
-func (r *RuntimeUpdates) xRead(ctx context.Context, updateMessagesByKey map[string]chan<- redis.XMessage, streams icingaredis.Streams) func() error {
+func (r *RuntimeUpdates) xRead(
+	g *errgroup.Group, ctx context.Context,
+	updateMessagesByKey map[string]chan<- redis.XMessage, streams icingaredis.Streams,
+) func() error {
 	return func() error {
 		defer func() {
 			for _, updateMessages := range updateMessagesByKey {
 				close(updateMessages)
 			}
 		}()
+
+		refurbishers := make(map[string]*utils.Refurbisher, len(streams))
+		for stream := range streams {
+			refurbishers[stream] = utils.NewRefurbisher()
+		}
 
 		for {
 			xra := &redis.XReadArgs{
@@ -344,6 +365,30 @@ func (r *RuntimeUpdates) xRead(ctx context.Context, updateMessagesByKey map[stri
 					}
 				}
 				streams[stream.Stream] = id
+
+				stream := stream.Stream
+				g.Go(func() error {
+					return refurbishers[stream].Do(ctx, func(ctx context.Context) error {
+						tsAndSerial := strings.Split(id, "-")
+						if s, err := strconv.ParseUint(tsAndSerial[1], 10, 64); err == nil {
+							tsAndSerial[1] = strconv.FormatUint(s+1, 10)
+						}
+
+						cmd := r.redis.XTrimMinIDApprox(ctx, stream, strings.Join(tsAndSerial, "-"), 0)
+						err := cmd.Err()
+
+						if err != nil {
+							if utils.IsContextCanceled(err) {
+								// Maybe just refurbished
+								err = nil
+							} else {
+								err = icingaredis.WrapCmdErr(cmd)
+							}
+						}
+
+						return err
+					})
+				})
 			}
 		}
 	}

@@ -10,6 +10,7 @@ import (
 	v1types "github.com/icinga/icingadb/pkg/icingadb/v1"
 	v1 "github.com/icinga/icingadb/pkg/icingadb/v1/history"
 	"github.com/icinga/icingadb/pkg/icingaredis"
+	"github.com/icinga/icingadb/pkg/icingaredis/telemetry"
 	"github.com/icinga/icingadb/pkg/logging"
 	"github.com/icinga/icingadb/pkg/periodic"
 	"github.com/icinga/icingadb/pkg/structify"
@@ -26,14 +27,16 @@ type Sync struct {
 	db     *icingadb.DB
 	redis  *icingaredis.Client
 	logger *logging.Logger
+	stats  *telemetry.Stats
 }
 
 // NewSync creates a new Sync.
-func NewSync(db *icingadb.DB, redis *icingaredis.Client, logger *logging.Logger) *Sync {
+func NewSync(db *icingadb.DB, redis *icingaredis.Client, logger *logging.Logger, stats *telemetry.Stats) *Sync {
 	return &Sync{
 		db:     db,
 		redis:  redis,
 		logger: logger,
+		stats:  stats,
 	}
 }
 
@@ -141,7 +144,7 @@ func (s Sync) deleteFromRedis(ctx context.Context, key string, input <-chan redi
 		}
 	}).Stop()
 
-	bulks := com.BulkXMessages(ctx, input, s.redis.Options.HScanCount)
+	bulks := com.Bulk(ctx, input, s.redis.Options.HScanCount, com.NeverSplit[redis.XMessage])
 	stream := "icinga:history:stream:" + key
 	for {
 		select {
@@ -157,6 +160,7 @@ func (s Sync) deleteFromRedis(ctx context.Context, key string, input <-chan redi
 			}
 
 			counter.Add(uint64(len(ids)))
+			s.stats.History.Add(uint64(len(ids)))
 		case <-ctx.Done():
 			return ctx.Err()
 		}

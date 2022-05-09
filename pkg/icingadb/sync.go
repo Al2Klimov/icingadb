@@ -8,6 +8,7 @@ import (
 	"github.com/icinga/icingadb/pkg/contracts"
 	v1 "github.com/icinga/icingadb/pkg/icingadb/v1"
 	"github.com/icinga/icingadb/pkg/icingaredis"
+	"github.com/icinga/icingadb/pkg/icingaredis/telemetry"
 	"github.com/icinga/icingadb/pkg/logging"
 	"github.com/icinga/icingadb/pkg/utils"
 	"github.com/pkg/errors"
@@ -22,14 +23,16 @@ type Sync struct {
 	db     *DB
 	redis  *icingaredis.Client
 	logger *logging.Logger
+	stats  *telemetry.Stats
 }
 
 // NewSync returns a new Sync.
-func NewSync(db *DB, redis *icingaredis.Client, logger *logging.Logger) *Sync {
+func NewSync(db *DB, redis *icingaredis.Client, logger *logging.Logger, stats *telemetry.Stats) *Sync {
 	return &Sync{
 		db:     db,
 		redis:  redis,
 		logger: logger,
+		stats:  stats,
 	}
 }
 
@@ -101,9 +104,12 @@ func (s Sync) ApplyDelta(ctx context.Context, delta *Delta) error {
 	}
 
 	g, ctx := errgroup.WithContext(ctx)
+	stat := getCounterForEntity(s.stats, delta.Subject.Entity())
 
 	// Create
 	if len(delta.Create) > 0 {
+		succeededCreate := make(chan contracts.Entity, 64)
+
 		s.logger.Infof("Inserting %d items of type %s", len(delta.Create), utils.Key(utils.Name(delta.Subject.Entity()), ' '))
 		var entities <-chan contracts.Entity
 		if delta.Subject.WithChecksum() {
@@ -125,12 +131,18 @@ func (s Sync) ApplyDelta(ctx context.Context, delta *Delta) error {
 		}
 
 		g.Go(func() error {
-			return s.db.CreateStreamed(ctx, entities)
+			defer close(succeededCreate)
+
+			return s.db.CreateStreamed(ctx, entities, succeededCreate)
 		})
+
+		go countChan(succeededCreate, stat)
 	}
 
 	// Update
 	if len(delta.Update) > 0 {
+		succeededUpdate := make(chan contracts.Entity, 64)
+
 		s.logger.Infof("Updating %d items of type %s", len(delta.Update), utils.Key(utils.Name(delta.Subject.Entity()), ' '))
 		pairs, errs := s.redis.HMYield(
 			ctx,
@@ -147,18 +159,28 @@ func (s Sync) ApplyDelta(ctx context.Context, delta *Delta) error {
 		com.ErrgroupReceive(g, errs)
 
 		g.Go(func() error {
+			defer close(succeededUpdate)
+
 			// Using upsert here on purpose as this is the fastest way to do bulk updates.
 			// However, there is a risk that errors in the sync implementation could silently insert new rows.
-			return s.db.UpsertStreamed(ctx, entities, nil)
+			return s.db.UpsertStreamed(ctx, entities, succeededUpdate)
 		})
+
+		go countChan(succeededUpdate, stat)
 	}
 
 	// Delete
 	if len(delta.Delete) > 0 {
+		succeededDelete := make(chan interface{}, 64)
+
 		s.logger.Infof("Deleting %d items of type %s", len(delta.Delete), utils.Key(utils.Name(delta.Subject.Entity()), ' '))
 		g.Go(func() error {
-			return s.db.Delete(ctx, delta.Subject.Entity(), delta.Delete.IDs())
+			defer close(succeededDelete)
+
+			return s.db.Delete(ctx, delta.Subject.Entity(), delta.Delete.IDs(), succeededDelete)
 		})
+
+		go countChan(succeededDelete, stat)
 	}
 
 	return g.Wait()
@@ -200,4 +222,21 @@ func (s Sync) SyncCustomvars(ctx context.Context) error {
 	})
 
 	return g.Wait()
+}
+
+// getCounterForEntity returns the appropriate counter (config/state) from s for e.
+func getCounterForEntity(s *telemetry.Stats, e contracts.Entity) *com.Counter {
+	switch e.(type) {
+	case *v1.HostState, *v1.ServiceState:
+		return &s.State
+	default:
+		return &s.Config
+	}
+}
+
+// countChan counts items from in (as they appear) into out.
+func countChan[T any](in <-chan T, out *com.Counter) {
+	for range in {
+		out.Inc()
+	}
 }

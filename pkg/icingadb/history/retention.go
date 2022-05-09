@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/icinga/icingadb/pkg/icingadb"
+	"github.com/icinga/icingadb/pkg/icingaredis/telemetry"
 	"github.com/icinga/icingadb/pkg/logging"
 	"github.com/icinga/icingadb/pkg/periodic"
 	"github.com/pkg/errors"
@@ -64,6 +65,7 @@ func (o RetentionOptions) Validate() error {
 type Retention struct {
 	db       *icingadb.DB
 	logger   *logging.Logger
+	stats    *telemetry.Stats
 	days     uint64
 	interval time.Duration
 	count    uint64
@@ -71,10 +73,14 @@ type Retention struct {
 }
 
 // NewRetention returns a new Retention.
-func NewRetention(db *icingadb.DB, days uint64, interval time.Duration, count uint64, options RetentionOptions, logger *logging.Logger) *Retention {
+func NewRetention(
+	db *icingadb.DB, days uint64, interval time.Duration, count uint64,
+	options RetentionOptions, logger *logging.Logger, stats *telemetry.Stats,
+) *Retention {
 	return &Retention{
 		db:       db,
 		logger:   logger,
+		stats:    stats,
 		days:     days,
 		interval: interval,
 		count:    count,
@@ -119,7 +125,7 @@ func (r *Retention) StartWithCallback(ctx context.Context, c func(table string, 
 
 			r.logger.Debugf("Cleaning up historical data for category %s older than %s", category, olderThan)
 
-			rs, err := r.db.CleanupOlderThan(ctx, stmt, r.count, olderThan)
+			rs, err := r.db.CleanupOlderThan(ctx, stmt, r.count, olderThan, &r.stats.HistoryCleanup)
 			if err != nil {
 				select {
 				case errs <- err:

@@ -11,6 +11,7 @@ import (
 	"github.com/icinga/icingadb/pkg/icingadb/overdue"
 	v1 "github.com/icinga/icingadb/pkg/icingadb/v1"
 	"github.com/icinga/icingadb/pkg/icingaredis"
+	"github.com/icinga/icingadb/pkg/icingaredis/telemetry"
 	"github.com/icinga/icingadb/pkg/logging"
 	"github.com/icinga/icingadb/pkg/utils"
 	"github.com/okzk/sdnotify"
@@ -57,23 +58,6 @@ func run() int {
 
 	logger.Info("Starting Icinga DB")
 
-	db, err := cmd.Database(logs.GetChildLogger("database"))
-	if err != nil {
-		logger.Fatalf("%+v", errors.Wrap(err, "can't create database connection pool from config"))
-	}
-	defer db.Close()
-	{
-		logger.Info("Connecting to database")
-		err := db.Ping()
-		if err != nil {
-			logger.Fatalf("%+v", errors.Wrap(err, "can't connect to database"))
-		}
-	}
-
-	if err := checkDbSchema(context.Background(), db); err != nil {
-		logger.Fatalf("%+v", err)
-	}
-
 	rc, err := cmd.Redis(logs.GetChildLogger("redis"))
 	if err != nil {
 		logger.Fatalf("%+v", errors.Wrap(err, "can't create Redis client from config"))
@@ -95,8 +79,34 @@ func run() int {
 		go monitorRedisSchema(logger, rc, pos)
 	}
 
+	prioRc, err := cmd.Redis(logs.GetChildLogger("redis"))
+	if err != nil {
+		logger.Fatalf("%+v", errors.Wrap(err, "can't create Redis client from config"))
+	}
+
 	ctx, cancelCtx := context.WithCancel(context.Background())
 	defer cancelCtx()
+
+	telemetryLogger := logs.GetChildLogger("telemetry")
+
+	dbErr := telemetry.NewErr(ctx, prioRc, "db", telemetryLogger)
+
+	db, err := cmd.Database(logs.GetChildLogger("database"), dbErr)
+	if err != nil {
+		logger.Fatalf("%+v", errors.Wrap(err, "can't create database connection pool from config"))
+	}
+	defer db.Close()
+	{
+		logger.Info("Connecting to database")
+		err := db.Ping()
+		if err != nil {
+			logger.Fatalf("%+v", errors.Wrap(err, "can't connect to database"))
+		}
+	}
+
+	if err := checkDbSchema(context.Background(), db); err != nil {
+		logger.Fatalf("%+v", err)
+	}
 
 	// Use dedicated connections for heartbeat and HA to ensure that heartbeats are always processed and
 	// the instance table is updated. Otherwise, the connections can be too busy due to the synchronization of
@@ -104,19 +114,30 @@ func run() int {
 	// the heartbeat is not read while HA gets stuck when updating the instance table.
 	var heartbeat *icingaredis.Heartbeat
 	var ha *icingadb.HA
-	{
-		rc, err := cmd.Redis(logs.GetChildLogger("redis"))
-		if err != nil {
-			logger.Fatalf("%+v", errors.Wrap(err, "can't create Redis client from config"))
-		}
-		heartbeat = icingaredis.NewHeartbeat(ctx, rc, logs.GetChildLogger("heartbeat"))
+	var stats *telemetry.Stats
+	var reportResponsibility func(bool)
 
-		db, err := cmd.Database(logs.GetChildLogger("database"))
+	{
+		heartbeat = icingaredis.NewHeartbeat(ctx, prioRc, logs.GetChildLogger("heartbeat"))
+
+		db, err := cmd.Database(logs.GetChildLogger("database"), dbErr)
 		if err != nil {
 			logger.Fatalf("%+v", errors.Wrap(err, "can't create database connection pool from config"))
 		}
 		defer db.Close()
 		ha = icingadb.NewHA(ctx, db, heartbeat, logs.GetChildLogger("high-availability"))
+
+		telemetry.StartHeartbeat(ctx, prioRc, telemetryLogger)
+
+		stats = telemetry.NewStats(ctx, prioRc, telemetryLogger)
+		teleHaRefurbisher := utils.NewRefurbisher()
+
+		reportResponsibility = func(isResponsible bool) {
+			_ = teleHaRefurbisher.Do(ctx, func(ctx context.Context) error {
+				telemetry.ReportResponsibility(ctx, prioRc, telemetryLogger, isResponsible)
+				return nil
+			})
+		}
 	}
 	// Closing ha on exit ensures that this instance retracts its heartbeat
 	// from the database so that another instance can take over immediately.
@@ -127,10 +148,10 @@ func run() int {
 		ha.Close(ctx)
 		cancelCtx()
 	}()
-	s := icingadb.NewSync(db, rc, logs.GetChildLogger("config-sync"))
-	hs := history.NewSync(db, rc, logs.GetChildLogger("history-sync"))
-	rt := icingadb.NewRuntimeUpdates(db, rc, logs.GetChildLogger("runtime-updates"))
-	ods := overdue.NewSync(db, rc, logs.GetChildLogger("overdue-sync"))
+	s := icingadb.NewSync(db, rc, logs.GetChildLogger("config-sync"), stats)
+	hs := history.NewSync(db, rc, logs.GetChildLogger("history-sync"), stats)
+	rt := icingadb.NewRuntimeUpdates(db, rc, logs.GetChildLogger("runtime-updates"), stats)
+	ods := overdue.NewSync(db, rc, logs.GetChildLogger("overdue-sync"), stats)
 	ret := history.NewRetention(
 		db,
 		cmd.Config.HistoryRetention.Days,
@@ -138,6 +159,7 @@ func run() int {
 		cmd.Config.HistoryRetention.Count,
 		cmd.Config.HistoryRetention.Options,
 		logs.GetChildLogger("history-retention"),
+		stats,
 	)
 
 	sig := make(chan os.Signal, 1)
@@ -158,6 +180,7 @@ func run() int {
 			select {
 			case <-ha.Takeover():
 				logger.Info("Taking over")
+				go reportResponsibility(true)
 
 				go func() {
 					for hactx.Err() == nil {
@@ -310,6 +333,7 @@ func run() int {
 				}()
 			case <-ha.Handover():
 				logger.Warn("Handing over")
+				go reportResponsibility(false)
 
 				cancelHactx()
 			case <-hactx.Done():

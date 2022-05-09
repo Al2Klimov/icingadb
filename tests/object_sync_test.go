@@ -310,8 +310,6 @@ func TestObjectSync(t *testing.T) {
 	})
 
 	t.Run("RuntimeUpdates", func(t *testing.T) {
-		t.Parallel()
-
 		// Wait some time to give Icinga DB a chance to finish the initial sync.
 		// TODO(jb): properly wait for this? but I don't know of a good way to detect this at the moment
 		time.Sleep(20 * time.Second)
@@ -319,14 +317,10 @@ func TestObjectSync(t *testing.T) {
 		client := i.ApiClient()
 
 		t.Run("Service", func(t *testing.T) {
-			t.Parallel()
-
 			for _, service := range makeTestSyncServices(t) {
 				service := service
 
 				t.Run("CreateAndDelete-"+service.VariantInfoString(), func(t *testing.T) {
-					t.Parallel()
-
 					client.CreateObject(t, "services", *service.HostName+"!"+service.Name, map[string]interface{}{
 						"attrs": makeIcinga2ApiAttributes(service),
 					})
@@ -363,14 +357,10 @@ func TestObjectSync(t *testing.T) {
 			}
 
 			t.Run("Update", func(t *testing.T) {
-				t.Parallel()
-
 				for _, service := range makeTestSyncServices(t) {
 					service := service
 
 					t.Run(service.VariantInfoString(), func(t *testing.T) {
-						t.Parallel()
-
 						// Start with the final host_name and zone. Finding out what happens when you change this on an
 						// existing object might be fun, but not at this time.
 						client.CreateObject(t, "services", *service.HostName+"!"+service.Name, map[string]interface{}{
@@ -417,14 +407,10 @@ func TestObjectSync(t *testing.T) {
 		})
 
 		t.Run("User", func(t *testing.T) {
-			t.Parallel()
-
 			for _, user := range makeTestUsers(t) {
 				user := user
 
 				t.Run("CreateAndDelete-"+user.VariantInfoString(), func(t *testing.T) {
-					t.Parallel()
-
 					client.CreateObject(t, "users", user.Name, map[string]interface{}{
 						"attrs": makeIcinga2ApiAttributes(user),
 					})
@@ -445,8 +431,6 @@ func TestObjectSync(t *testing.T) {
 			}
 
 			t.Run("Update", func(t *testing.T) {
-				t.Parallel()
-
 				userName := utils.UniqueName(t, "user")
 
 				client.CreateObject(t, "users", userName, map[string]interface{}{
@@ -479,14 +463,10 @@ func TestObjectSync(t *testing.T) {
 		})
 
 		t.Run("Notifications", func(t *testing.T) {
-			t.Parallel()
-
 			for _, notification := range makeTestNotifications(t) {
 				notification := notification
 
 				t.Run("CreateAndDelete-"+notification.VariantInfoString(), func(t *testing.T) {
-					t.Parallel()
-
 					client.CreateObject(t, "notifications", notification.fullName(), map[string]interface{}{
 						"attrs": makeIcinga2ApiAttributes(notification),
 					})
@@ -507,8 +487,6 @@ func TestObjectSync(t *testing.T) {
 			}
 
 			t.Run("Update", func(t *testing.T) {
-				t.Parallel()
-
 				baseNotification := Notification{
 					Name:        utils.UniqueName(t, "notification"),
 					HostName:    newString("default-host"),
