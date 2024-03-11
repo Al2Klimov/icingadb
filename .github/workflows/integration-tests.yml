@@ -37,8 +37,601 @@ jobs:
       - name: Build Integration Tests
         run: go test -o ../icingadb-test -c .
         working-directory: tests/
-      - name: Run Integration Tests
-        run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
+        env:
+          ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
+          ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
+          ICINGA_TESTING_ICINGADB_SCHEMA_MYSQL: ${{ github.workspace }}/schema/mysql/schema.sql
+          ICINGA_TESTING_ICINGADB_SCHEMA_PGSQL: ${{ github.workspace }}/schema/pgsql/schema.sql
+      - run: ./icingadb-test -icingatesting.debuglog debug.log -test.v
         env:
           ICINGADB_TESTS_DATABASE_TYPE: ${{ matrix.database.name }}
           ICINGA_TESTING_ICINGADB_BINARY: ${{ github.workspace }}/icingadb
